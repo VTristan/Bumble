@@ -52,13 +52,13 @@ public class ApiRest {
 				verbs = new HttpDelete(url);
 				break;
 			default:
-				throw new IllegalArgumentException("La méthode saisie "+method+" n'est pas correct. Attendu:[GET,POST,PUT,PATCH,DELETE]");
+				throw new IllegalArgumentException("Method is not correct "+method+". Exepected:[GET,POST,PUT,PATCH,DELETE]");
 			}
 			//TODO: verbs.setEntity(new StringEntity(header));
-			verbs.addHeader("Cookie", "session_cookie_name=session; device_id=f4c46bd3-6bd3-d33c-3c87-874756af82cb; aid=792169440; cpc=%7B%22c%22%3A1%2C%22e%22%3A1906672397470%2C%22u%22%3A%22792169440%22%7D; _scid=dfc6bb96-1c90-4958-b2bd-f452524c0966; _ga=GA1.2.409567416.1591318000; _pin_unauth=dWlkPU1XTmxOR1ZsTmpRdFlUUTRZUzAwTURnekxUazBZV1F0TjJGak5qZ3habUZtWkRFeQ; SL_GWPT_Show_Hide_tmp=1; SL_wptGlobTipTmp=1; HDR-X-User-id=792169440; cookie_banner_closed=true; _derived_epik=dj0yJnU9RkJZZ2M1TndFMVJNOXY5bEdRWDhWLXNoQ1lGOTlJNUEmbj1ZWnd3UFByWFFodWdJTFFoeUhBNW1RJm09MSZ0PUFBQUFBRjdiY21jJnJtPTEmcnQ9QUFBQUFGN2JjbWM; session=s1:427:a7Q2ZaQHzXHHnGclSD91oUYNqNqL9mgJQBDVNHOO");
-			verbs.addHeader("x-use-session-cookie", "1");
+			verbs.setEntity(new StringEntity("Cookie: session_cookie_name=session; device_id=f4c46bd3-6bd3-d33c-3c87-874756af82cb; aid=792169440; cpc=%7B%22c%22%3A1%2C%22e%22%3A1906672397470%2C%22u%22%3A%22792169440%22%7D; _scid=dfc6bb96-1c90-4958-b2bd-f452524c0966; _ga=GA1.2.409567416.1591318000; _pin_unauth=dWlkPU1XTmxOR1ZsTmpRdFlUUTRZUzAwTURnekxUazBZV1F0TjJGak5qZ3habUZtWkRFeQ; _derived_epik=dj0yJnU9RkJZZ2M1TndFMVJNOXY5bEdRWDhWLXNoQ1lGOTlJNUEmbj1ZWnd3UFByWFFodWdJTFFoeUhBNW1RJm09MSZ0PUFBQUFBRjdiY21jJnJtPTEmcnQ9QUFBQUFGN2JjbWM; SL_GWPT_Show_Hide_tmp=1; SL_wptGlobTipTmp=1; HDR-X-User-id=792169440; session=s1:427:a7Q2ZaQHzXHHnGclSD91oUYNqNqL9mgJQBDVNHOO\r\n" + 
+					"x-use-session-cookie: 1"));
 			
-			//TODO: Si c'est une méthode get, il n'y a pas de body
+			//TODO: No body in case of GET method
 			verbs.setEntity(new StringEntity(body));
 
 			try (CloseableHttpResponse response = httpclient.execute(verbs)) {
@@ -68,7 +68,7 @@ public class ApiRest {
 				HttpEntity entity = response.getEntity();
 				BufferedReader br = new BufferedReader(new InputStreamReader((response.getEntity().getContent())));
 				String output;
-				String date = new SimpleDateFormat("'[le' dd MMMM yyyy 'à' hh:mm:ss ']'").format(new Date());
+				String date = new SimpleDateFormat("'['dd/MM/yyyy hh:mm:ss']'").format(new Date());
 				
 				while ((output = br.readLine()) != null) {
 					Files.writeString(Paths.get(outputFile), date + output + ",\n", StandardCharsets.UTF_8, StandardOpenOption.APPEND);
