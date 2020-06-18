@@ -35,14 +35,13 @@ public class RestServiceManagement {
 			//Initialisations des params
 			this.method = applyXpath("document/parameters/uri/@method");
 			this.url = applyXpath("document/parameters/uri/@url");
-			this.header = applyXpath("string-join(for $i in (1 to count(//header)) return concat(//header[$i]/@name,': ',//header[$i]/@value,' '))");
+			this.header = applyXpath("document/parameters/header/@value");
 			this.body = applyXpath("document/parameters/body/@value");
 			this.outputFile = applyXpath("document/parameters/outputFile/@path");
 			
 		} catch (SaxonApiException e) {
 			e.printStackTrace();
 		}
-
 	}
 	
 	private String applyXpath(String xpath) {
@@ -58,7 +57,6 @@ public class RestServiceManagement {
 			e.printStackTrace();
 			return null;
 		}
-
 	}
 	
 	public void messaging() {
@@ -70,9 +68,5 @@ public class RestServiceManagement {
 		return "Method: " + method + "\nUrl: " + url + "\nHeader: " + header + "\nBody: " + body
 				+ "\nOutputFile: " + outputFile;
 	}
-	
-	
-		
-		
 
 }
