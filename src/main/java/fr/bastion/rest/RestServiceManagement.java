@@ -1,6 +1,7 @@
 package fr.bastion.rest;
 
-import java.io.File;
+import java.nio.file.Paths;
+import org.slf4j.Logger;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.s9api.DocumentBuilder;
 import net.sf.saxon.s9api.Processor;
@@ -11,42 +12,69 @@ import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmNode;
 
 public class RestServiceManagement {
-	//config
-	private Processor proc;
-	private DocumentBuilder builder;
-	private XPathCompiler compiler;
-	private XdmNode contextNode;
-	
-	//params
+
+	// Configurations.
+	private static Processor proc = new Processor(Configuration.newConfiguration());
+	private static DocumentBuilder builder = proc.newDocumentBuilder();
+	private static XPathCompiler compiler = proc.newXPathCompiler();
+	private static XdmNode contextNode = null;
+	private static Logger logger = org.slf4j.LoggerFactory.getLogger(RestServiceManagement.class);
+
+	// Parameters.
 	private String method;
 	private String url;
-	private String header;
+	private static String header = null;
 	private String body;
+	//TODO: Path better than String.
 	private String outputFile;
-	
+
+	// Constructor.
+	public RestServiceManagement() {
+		// Singleton.
+		if (contextNode == null) {
+			loadCookies();
+		}
+	}
+
+	private void loadCookies() {
+		try {
+			// Configuration.
+			// TODO: Add path in the classPath or in the pom.xml. 
+			// TODO: Add documentation for the x-path.
+			// I use Paths.get(source).toFile() but I can also use the class io.File.
+			contextNode = builder.build(Paths.get("src/main/resources/messages/cookies.xml").toFile());
+			header = applyXpath("document/parameter/cookies/@value");
+			if (header.isBlank()) {
+				throw new IllegalArgumentException("Cookies have been eaten!");
+			}
+		} catch (SaxonApiException e) {
+			e.printStackTrace();
+		}
+		//TODO: Remove logger.
+		logger.info("Cookies loaded");
+	}
+
 	public void setParameter(String source) {
 		try {
-			//Configuration
-			proc = new Processor(Configuration.newConfiguration());
-			builder = proc.newDocumentBuilder();
-			compiler = proc.newXPathCompiler();
-			contextNode = builder.build(new File(source)); //Chargement du document
-		
-			//Initialisations des params
+			// Load source. 
+			// I use Paths.get(source).toFile() but I can also use the class io.File.
+			contextNode = builder.build(Paths.get(source).toFile());
+
+			// Initialization parameters. 
+			// TODO: Add documentation for the x-path.
 			this.method = applyXpath("document/parameters/uri/@method");
 			this.url = applyXpath("document/parameters/uri/@url");
-			this.header = applyXpath("document/parameters/header/@value");
 			this.body = applyXpath("document/parameters/body/@value");
 			this.outputFile = applyXpath("document/parameters/outputFile/@path");
-			
 		} catch (SaxonApiException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private String applyXpath(String xpath) {
 		try {
-			XPathSelector seq = compiler.compile(xpath).load(); //Compilation du xpath
+			// x-path compilation.
+			XPathSelector seq = compiler.compile(xpath).load();
 			seq.setContextItem(contextNode);
 			String parameter = null;
 			for (XdmItem item : seq) {
@@ -58,15 +86,16 @@ public class RestServiceManagement {
 			return null;
 		}
 	}
-	
+
 	public void messaging() {
-		new ApiRest().messageRest(method, url, header, body, outputFile);
+		//messageRest or restMessage?
+		ApiRest.messageRest(method, url, header, body, outputFile);
 	}
 
 	@Override
 	public String toString() {
-		return "Method: " + method + "\nUrl: " + url + "\nHeader: " + header + "\nBody: " + body
-				+ "\nOutputFile: " + outputFile;
+		return "Method: " + method + "\nUrl: " + url + "\nHeader: " + header + "\nBody: " + body + "\nOutputFile: "
+				+ outputFile;
 	}
 
 }

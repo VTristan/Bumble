@@ -25,60 +25,76 @@ import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.slf4j.Logger;
 
 public class ApiRest {
-	
-	private Logger logger = org.slf4j.LoggerFactory.getLogger(ApiRest.class);
-	
-	public void messageRest(String method, String url, String headerCookie, String body, String outputFile) {
-		
-		checkingFile(outputFile);
-		
-		try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
-			HttpUriRequestBase verbs = null;
 
-			switch (method) {
-			case "GET":
-				verbs = new HttpGet(url);
-				break;
-			case "POST":
-				verbs = new HttpPost(url);
-				verbs.addHeader("cookie",headerCookie);
-				verbs.addHeader("x-use-session-cookie","1");
-				verbs.setEntity(new StringEntity(body,StandardCharsets.UTF_8));
-				break;
-			case "PUT":
-				verbs = new HttpPut(url);
-				break;
-			case "PATCH":
-				verbs = new HttpPatch(url);
-				break;
-			case "DELETE":
-				verbs = new HttpDelete(url);
-				break;
-			default:
-				throw new IllegalArgumentException("Method is not correct "+method+". Exepected:[GET,POST,PUT,PATCH,DELETE]");
-			}
-			
-			try (CloseableHttpResponse response = httpclient.execute(verbs)) {
-				logger.info("{} : {}", new Object[] { response.getCode(), response.getReasonPhrase() });
-				//TODO: Throw exception if response is like 'Session not found' despite 200 code.
+	private static Logger logger = org.slf4j.LoggerFactory.getLogger(ApiRest.class);
 
-				response.addHeader("Content-Type", "charset=UTF-8");
-				HttpEntity entity = response.getEntity();
-				BufferedReader br = new BufferedReader(new InputStreamReader((response.getEntity().getContent()),StandardCharsets.UTF_8));
-				String output;
-				String date = new SimpleDateFormat("'['dd/MM/yyyy hh:mm:ss']'").format(new Date());
-				
-				while ((output = br.readLine()) != null) {
-					Files.writeString(Paths.get(outputFile), date + output + ",\n", StandardCharsets.UTF_8, StandardOpenOption.APPEND);
-				}
-				EntityUtils.consume(entity);
+	protected static void messageRest(String method, String url, String headerCookie, String body, String outputFilePath) {
+
+		logger.info(method +" "+url+" "+headerCookie+" "+body+" "+outputFilePath);
+		
+		if (outputFilePath==null || outputFilePath.isBlank()) {
+			request(method, url, headerCookie, body);
+		} else {
+			checkingOutputFilePath(outputFilePath);
+			HttpUriRequestBase verbs = request(method, url, headerCookie, body);
+			response(outputFilePath, verbs);
+		}
+	}
+
+	private static HttpUriRequestBase request(String method, String url, String headerCookie, String body) {
+		HttpUriRequestBase verbs = null;
+
+		switch (method) {
+		case "GET":
+			verbs = new HttpGet(url);
+			break;
+		case "POST":
+			verbs = new HttpPost(url);
+			verbs.addHeader("cookie", headerCookie);
+			// Always like this.
+			verbs.addHeader("x-use-session-cookie", "1");
+			verbs.setEntity(new StringEntity(body, StandardCharsets.UTF_8));
+			break;
+		case "PUT":
+			verbs = new HttpPut(url);
+			break;
+		case "PATCH":
+			verbs = new HttpPatch(url);
+			break;
+		case "DELETE":
+			verbs = new HttpDelete(url);
+			break;
+		default:
+			throw new IllegalArgumentException(
+					"Method is not correct " + method + ". Exepected:[GET,POST,PUT,PATCH,DELETE]");
+		}
+		logger.info("Message sent");
+		return verbs;
+	}
+
+	private static void response(String outputFile, HttpUriRequestBase verbs) {
+		try (CloseableHttpClient httpclient = HttpClients.createDefault(); CloseableHttpResponse response = httpclient.execute(verbs)) {
+			logger.info("{} : {}", new Object[] { response.getCode(), response.getReasonPhrase() });
+			// TODO: Throw exception if response is like 'Session not found' despite 200 code.
+
+			response.addHeader("Content-Type", "charset=UTF-8");
+			HttpEntity entity = response.getEntity();
+			BufferedReader br = new BufferedReader(
+					new InputStreamReader((response.getEntity().getContent()), StandardCharsets.UTF_8));
+			String output;
+			String date = new SimpleDateFormat("'['dd/MM/yyyy hh:mm:ss']'").format(new Date());
+
+			while ((output = br.readLine()) != null) {
+				Files.writeString(Paths.get(outputFile), date + output + ",\n", StandardCharsets.UTF_8,
+						StandardOpenOption.APPEND);
 			}
+			EntityUtils.consume(entity);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	private void checkingFile(String file) {
+	private static void checkingOutputFilePath(String file) {
 		if (Files.notExists(Paths.get(file), LinkOption.NOFOLLOW_LINKS)) {
 			try {
 				Files.createFile(Paths.get(file));
