@@ -19,16 +19,21 @@ import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.slf4j.Logger;
 
-public class ApiRest {
+public class RestService {
 
-	private static Logger logger = org.slf4j.LoggerFactory.getLogger(ApiRest.class);
+	private static Logger logger = org.slf4j.LoggerFactory.getLogger(RestService.class);
 
-	protected static void messageRest(String method, String url, String headerCookie, String body, String outputFilePath) {
-		logger.info("method: "+method + " url:" + url + " headerCookie:" + headerCookie + " body:" + body + " outputFilePath:" + outputFilePath);
+	protected static void displayParameters(String method, String url, String headerCookie, String body, String outputFilePath) {
+		logger.info("method: " + method + " url:" + url + " headerCookie:" + headerCookie + " body:" + body + " outputFilePath:" + outputFilePath);
+	}
 
+	protected static void restMessage(String method, String url, String headerCookie, String body, String outputFilePath) {
+		displayParameters(method, url, headerCookie, body, outputFilePath);
+		
 		HttpUriRequestBase verbs = request(method, url, headerCookie, body);
 		response(verbs, outputFilePath);
 	}
@@ -57,8 +62,7 @@ public class ApiRest {
 			verbs = new HttpDelete(url);
 			break;
 		default:
-			throw new IllegalArgumentException(
-					"Method is not correct " + method + ". Exepected:[GET,POST,PUT,PATCH,DELETE]");
+			throw new IllegalArgumentException("Method is not correct " + method + ". Exepected:[GET,POST,PUT,PATCH,DELETE]");
 		}
 		return verbs;
 	}
@@ -73,23 +77,21 @@ public class ApiRest {
 				copyResponse(response, outputFile);
 			}
 
-			//EntityUtils.consume(response.getEntity());
+			 EntityUtils.consume(response.getEntity());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
 	private static void copyResponse(CloseableHttpResponse response, String outputFile) {
-		
 		checkingOutputFilePath(outputFile);
 
-		try (BufferedReader br = new BufferedReader(new InputStreamReader((response.getEntity().getContent()), StandardCharsets.UTF_8))){
+		try (BufferedReader br = new BufferedReader( new InputStreamReader((response.getEntity().getContent()), StandardCharsets.UTF_8))) {
 			String output;
 			String date = new SimpleDateFormat("'['dd/MM/yyyy hh:mm:ss']'").format(new Date());
 
 			while ((output = br.readLine()) != null) {
-				Files.writeString(Paths.get(outputFile), date + output + ",\n", StandardCharsets.UTF_8,
-						StandardOpenOption.APPEND);
+				Files.writeString(Paths.get(outputFile), date + output + ",\n", StandardCharsets.UTF_8, StandardOpenOption.APPEND);
 			}
 		} catch (UnsupportedOperationException e) {
 			e.printStackTrace();

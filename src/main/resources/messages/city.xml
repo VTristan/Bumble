@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- XML FILE to ask to the server for the city in which it locates us. -->
+<document>
+	<parameters name="get_city">
+		<outputFile path="src/main/resources/data/city" />
+		<uri method="POST" url="https://bumble.com/mwebapi.phtml?SERVER_GET_CITY" />
+		<!-- TODO: Remove this element. -->
+		<body value="{&quot;body&quot;:[{&quot;message_type&quot;:309,&quot;server_get_city&quot;:{&quot;latitude&quot;:48.60853,&quot;longitude&quot;:2.0655426}}],&quot;message_id&quot;:15,&quot;message_type&quot;:309,&quot;version&quot;:1,&quot;is_background&quot;:false}"/>
+	</parameters>
+</document>

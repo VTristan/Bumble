@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- XML FILE to update the location using latitude and longitude. -->
 <document>
 	<parameters name="update_location">
 		<uri method="POST" url="https://bumble.com/mwebapi.phtml?SERVER_UPDATE_LOCATION" />
-		<!-- TODO: add the Cookies -->
-		<header name="Cookie" value="..." />
-		<!-- TODO: set the number to 20 -->
+		<!-- TODO: Remove this element. -->
 		<body value="{&quot;body&quot;:[{&quot;message_type&quot;:4,&quot;server_update_location&quot;:{&quot;location&quot;:[{&quot;latitude&quot;:48.60853,&quot;longitude&quot;:2.0655426}]}}],&quot;message_id&quot;:18,&quot;message_type&quot;:4,&quot;version&quot;:1,&quot;is_background&quot;:false}"/>
 	</parameters>
 </document>

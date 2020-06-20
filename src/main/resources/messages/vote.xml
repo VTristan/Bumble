@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- XML FILE to vote a specific profile -->
+<!-- The body is missing because it must contain variables -->
+<document>
+	<parameters name="encounters_vote">
+		<outputFile path="src/main/resources/data/vote" />
+		<uri method="POST" url="https://bumble.com/mwebapi.phtml?SERVER_ENCOUNTERS_VOTE" />
+	</parameters>
+</document>
