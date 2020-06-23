@@ -27,9 +27,14 @@ import org.slf4j.Logger;
 public class ApiRest {
 	
 	private Logger logger = org.slf4j.LoggerFactory.getLogger(ApiRest.class);
+	private String outputFolder = "";
 	
 	public void messageRest(String method, String url, String headerCookie, String body, String outputFile) {
 		
+			// Checking if the folder 'Data' exists and then if the file 'encounter' exists.
+		PathFolderOutputFile(outputFile);
+		System.out.println(outputFolder);
+		checkingFolder(outputFolder);
 		checkingFile(outputFile);
 		
 		try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
@@ -78,6 +83,36 @@ public class ApiRest {
 		}
 	}
 
+	
+	private String PathFolderOutputFile(String outputFile) {
+		
+		String[] outputFileTab = outputFile.split("/");
+		String outputFolder = "";
+		
+		for(int i=0; i<outputFileTab.length -1; i++) {
+			if(i==0) {
+				outputFolder = outputFileTab[i];
+			}
+			else {
+				outputFolder = outputFolder + "/" + outputFileTab[i];
+			}
+		}
+		return this.outputFolder = outputFolder;
+	}
+	
+	private void checkingFolder(String folder) {
+		if (Files.notExists(Paths.get(folder))) {
+			try{
+				Files.createDirectory(Paths.get(outputFolder));
+				System.out.println("Antoine a géré !   data existe maintenant !");
+			}
+			catch(IOException e){
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	
 	private void checkingFile(String file) {
 		if (Files.notExists(Paths.get(file), LinkOption.NOFOLLOW_LINKS)) {
 			try {
@@ -87,5 +122,5 @@ public class ApiRest {
 			}
 		}
 	}
-
+	
 }
