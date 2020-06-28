@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- XML FILE to load cookies. -->
-<document>
-	<parameter>
-		<!-- I am hungry! -->
-		<cookies value="session=s1:427:a7Q2ZaQHzXHHnGclSD91oUYNqNqL9mgJQBDVNHOOT"/>
-	</parameter>
-</document>

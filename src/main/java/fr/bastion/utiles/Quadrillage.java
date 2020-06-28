@@ -12,6 +12,8 @@ public class Quadrillage {
 	
 	private final String fileName;
 	double[][] square;
+	List<Double> ordo;
+	List<Double> absc;
 
 	private final double degreLat = 0.009;
 	private final double degreLong = 0.0143;
@@ -88,10 +90,10 @@ public class Quadrillage {
 		double incrementLat = (endLat-startLat)/div;
 		double incrementLong = (endLong-startLong)/div;
 		
-		List<Double> ordo = abscOrdo(startLat, endLat, incrementLat);
-		List<Double> absc = abscOrdo(startLong, endLong, incrementLong);
+		this.ordo = abscOrdo(startLat, endLat, incrementLat);
+		this.absc = abscOrdo(startLong, endLong, incrementLong);
 		
-		writeDots(absc, ordo);
+		//writeDots(absc, ordo);
 
 	}
 
@@ -120,5 +122,13 @@ public class Quadrillage {
 			e1.printStackTrace();
 		}
 	}
-	
+
+	public List<Double> getOrdo() {
+		return ordo;
+	}
+
+	public List<Double> getAbsc() {
+		return absc;
+	}
+
 }

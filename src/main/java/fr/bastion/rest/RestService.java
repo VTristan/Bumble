@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -27,11 +27,11 @@ public class RestService {
 
 	private static Logger logger = org.slf4j.LoggerFactory.getLogger(RestService.class);
 
-	protected static void displayParameters(String method, String url, String headerCookie, String body, String outputFilePath) {
+	protected static void displayParameters(String method, String url, String headerCookie, String body, Path outputFilePath) {
 		logger.info("method: " + method + " url:" + url + " headerCookie:" + headerCookie + " body:" + body + " outputFilePath:" + outputFilePath);
 	}
 
-	protected static void restMessage(String method, String url, String headerCookie, String body, String outputFilePath) {
+	protected static void restMessage(String method, String url, String headerCookie, String body, Path outputFilePath) {
 		displayParameters(method, url, headerCookie, body, outputFilePath);
 		
 		HttpUriRequestBase verbs = request(method, url, headerCookie, body);
@@ -67,13 +67,13 @@ public class RestService {
 		return verbs;
 	}
 
-	private static void response(HttpUriRequestBase verbs, String outputFile) {
+	private static void response(HttpUriRequestBase verbs, Path outputFile) {
 		try (CloseableHttpClient httpclient = HttpClients.createDefault();
 				CloseableHttpResponse response = httpclient.execute(verbs)) {
 			// TODO: Throw exception if response is like 'Session not found' despite 200 code.
 			logger.info("{} : {}", new Object[] { response.getCode(), response.getReasonPhrase() });
 
-			if (outputFile != null && !outputFile.isBlank()) {
+			if (outputFile != null && !outputFile.toString().isBlank()) {
 				copyResponse(response, outputFile);
 			}
 
@@ -83,7 +83,7 @@ public class RestService {
 		}
 	}
 
-	private static void copyResponse(CloseableHttpResponse response, String outputFile) {
+	private static void copyResponse(CloseableHttpResponse response, Path outputFile) {
 		checkingOutputFilePath(outputFile);
 
 		try (BufferedReader br = new BufferedReader( new InputStreamReader((response.getEntity().getContent()), StandardCharsets.UTF_8))) {
@@ -91,7 +91,7 @@ public class RestService {
 			String date = new SimpleDateFormat("'['dd/MM/yyyy hh:mm:ss']'").format(new Date());
 
 			while ((output = br.readLine()) != null) {
-				Files.writeString(Paths.get(outputFile), date + output + ",\n", StandardCharsets.UTF_8, StandardOpenOption.APPEND);
+				Files.writeString(outputFile, date + output + ",\n", StandardCharsets.UTF_8, StandardOpenOption.APPEND);
 			}
 		} catch (UnsupportedOperationException e) {
 			e.printStackTrace();
@@ -100,10 +100,11 @@ public class RestService {
 		}
 	}
 
-	private static void checkingOutputFilePath(String file) {
-		if (Files.notExists(Paths.get(file), LinkOption.NOFOLLOW_LINKS)) {
+	private static void checkingOutputFilePath(Path outputFile) {
+		if (Files.notExists(outputFile, LinkOption.NOFOLLOW_LINKS)) {
 			try {
-				Files.createFile(Paths.get(file));
+				Files.createDirectories(outputFile.getParent());
+				Files.createFile(outputFile);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
