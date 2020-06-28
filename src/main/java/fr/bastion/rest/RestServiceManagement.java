@@ -1,7 +1,12 @@
 package fr.bastion.rest;
 
+import java.io.File;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+
 import org.slf4j.Logger;
+
+import fr.bastion.rest.specificMessages.SpecificMessages;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.s9api.DocumentBuilder;
 import net.sf.saxon.s9api.Processor;
@@ -11,7 +16,6 @@ import net.sf.saxon.s9api.XPathSelector;
 import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmNode;
 
-//TODO: Change name. InitializerRestService?
 public class RestServiceManagement {
 
 	// Configurations.
@@ -26,8 +30,7 @@ public class RestServiceManagement {
 	private String url;
 	private static String headerCookie = null;
 	private String body;
-	//TODO: Path better than String.
-	private String outputFilePath;
+	private Path outputFilePath;
 
 	// Constructor.
 	public RestServiceManagement() {
@@ -40,10 +43,9 @@ public class RestServiceManagement {
 	private void loadCookies() {
 		try {
 			// Configuration.
-			// TODO: Add path in the classPath or in the pom.xml. 
-			// TODO: Add documentation for the x-path.
-			contextNode = builder.build(Paths.get("src/main/resources/messages/cookies.xml").toFile());
-			headerCookie = applyXpath("document/parameter/cookies/@value");
+			// TODO: classPath or pom.xml. 
+			contextNode = builder.build(new File("src/main/resources/messages/parameters.xml"));
+			headerCookie = applyXpath("parameters/parameter/cookies/@value");
 			if (headerCookie==null || headerCookie.isBlank()) {
 				throw new IllegalArgumentException("Cookies have been eaten!");
 			}
@@ -53,20 +55,11 @@ public class RestServiceManagement {
 		logger.info("Cookies loaded");
 	}
 
-	public void setParameter(String source) {
-		try {
-			// Load source. 
-			contextNode = builder.build(Paths.get(source).toFile());
-
-			// Initialization parameters. 
-			// TODO: Add documentation for the x-path.
-			this.method = applyXpath("document/parameters/uri/@method");
-			this.url = applyXpath("document/parameters/uri/@url");
-			this.body = applyXpath("document/parameters/body/@value");
-			this.outputFilePath = applyXpath("document/parameters/outputFile/@path");
-		} catch (SaxonApiException e) {
-			e.printStackTrace();
-		}
+	public void setParameter(SpecificMessages source) {
+		this.method = source.getMethod();
+		this.url = source.getUrl();
+		this.body = source.getBody();
+		this.outputFilePath = Paths.get(applyXpath("parameters/parameter[@name='"+source.getClass().getSimpleName()+"']/outputFile/@path"));
 	}
 
 	private String applyXpath(String xpath) {
@@ -87,9 +80,9 @@ public class RestServiceManagement {
 
 	public void messaging() {
 		RestService.displayParameters(method, url, headerCookie, body, outputFilePath);
-		RestService.restMessage(method, url, headerCookie, body, outputFilePath);
 
-		//ApiRest.restMessage(method, url, header, body, outputFile);
+		//RestService.restMessage(method, url, headerCookie, body, outputFilePath);
+
 	}
 	
 	public void messaging(String body) {

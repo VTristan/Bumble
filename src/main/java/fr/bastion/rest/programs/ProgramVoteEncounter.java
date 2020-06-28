@@ -17,9 +17,10 @@ public class ProgramVoteEncounter {
 		Antoine ou moi créerons le programme pour trier les profiles plus tard.
 		Je vais donc inventer une liste en attendant. */
 		List<String> listUserId = new ArrayList<>(Arrays.asList("azertyuiop369","qsdfghjklm258","obff5b362880e6595555e8d57270391af933a5f984745808f"));
-
-		RestServiceManagement rest = new RestServiceManagement();
-		rest.setParameter("src/main/resources/messages/vote.xml");
-		rest.messaging(new VoteEncounter(listUserId.get(1), false).getBody());
+//
+//		RestServiceManagement rest = new RestServiceManagement();
+//		rest.setParameter("src/main/resources/messages/vote.xml");
+//		rest.messaging(new VoteEncounter(listUserId.get(1), false).getBody());
+		//todo: supprimer liste
 	}
 }
