@@ -81,13 +81,13 @@ public class RestServiceManagement {
 	public void messaging() {
 		RestService.displayParameters(method, url, headerCookie, body, outputFilePath);
 
-		//RestService.restMessage(method, url, headerCookie, body, outputFilePath);
+		RestService.restMessage(method, url, headerCookie, body, outputFilePath);
 
 	}
 	
 	public void messaging(String body) {
 		RestService.displayParameters(method, url, headerCookie, body, outputFilePath);
-		//RestService.restMessage(method, url, headerCookie, body, outputFilePath);
+		RestService.restMessage(method, url, headerCookie, body, outputFilePath);
 	}
 
 	@Override

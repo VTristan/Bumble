@@ -9,6 +9,7 @@ public class ProgramGetEncounter {
 		RestServiceManagement rest = new RestServiceManagement();
 		rest.setParameter(new GetEncounters());
 		rest.messaging();
+		System.out.println("Fin du programme");
 	}
 
 }
