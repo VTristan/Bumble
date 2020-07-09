@@ -1,10 +1,15 @@
 # Loading packages
 import json
 import codecs
+import os
+
+
+# Searching the Project Path in environment variables
+PROJECT_PATH = os.environ.get("PROJECT_HOME")
 
 
 # Opening of the outputfile
-with codecs.open("D:/Sauvegardes_Programmes/GitHub_Sauvegardes/Bumble/src/main/resources/other/jeu2Test_4", encoding="utf8") as file:
+with codecs.open(PROJECT_PATH + "/src/main/resources/other/jeu2Test_4", encoding="utf8") as file:
     enconters_str = file.read().replace("\u00a0", "").replace("\u00c3", "A")  # I replace all NON-BREAKING SPACES (\xa0) by an empty string. The encoding problem with Non-Breaking Spaces(NBSP) it's when you print them, it return you this: '\xa0', not this: ' '. To write a NBSP, type on your keyboard this AltCode 'Alt+0+1+6+0'.
     file.close()
 
@@ -39,5 +44,5 @@ for i in range(0, end):  # For each girl
 
 
 # Exportation of data
-with codecs.open("D:/Sauvegardes_Programmes/GitHub_Sauvegardes/Bumble/src/main/resources/other/json_of_girls.json", "w", encoding="utf8") as json_file:
+with codecs.open(PROJECT_PATH + "/src/main/resources/other/json_of_girls.json", "w", encoding="utf8") as json_file:
     json.dump(dict_parsed, json_file)
