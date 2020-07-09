@@ -56,9 +56,9 @@ public class RestServiceManagement {
 	}
 
 	public void setParameter(SpecificMessages source) {
-		this.method = source.getMethod();
-		this.url = source.getUrl();
-		this.body = source.getBody();
+		//this.method = source.getMethod();
+		//this.url = source.getUrl();
+		//this.body = source.getBody();
 		this.outputFilePath = Paths.get(applyXpath("parameters/parameter[@name='"+source.getClass().getSimpleName()+"']/outputFile/@path"));
 	}
 

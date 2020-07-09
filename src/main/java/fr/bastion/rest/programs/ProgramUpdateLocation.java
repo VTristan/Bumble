@@ -8,12 +8,11 @@ public class ProgramUpdateLocation {
 
 	public static void main(String[] args) {
 		RestServiceManagement rest = new RestServiceManagement();
-		rest.setParameter(new UpdateLocation(48.7054463, 2.54068));
+		rest.setParameter(new UpdateLocation());
 		rest.messaging();
 		
-		rest.setParameter(new GetCity(48.7054463, 2.54068));
+		rest.setParameter(new GetCity());
 		rest.messaging();
-		
 		
 	}
 

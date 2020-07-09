@@ -27,7 +27,7 @@ public class RestService {
 
 	private static Logger logger = org.slf4j.LoggerFactory.getLogger(RestService.class);
 
-	protected static void displayParameters(String method, String url, String headerCookie, String body, Path outputFilePath) {
+	public static void displayParameters(String method, String url, String headerCookie, String body, Path outputFilePath) {
 		logger.info("method: " + method + " url:" + url + " headerCookie:" + headerCookie + " body:" + body + " outputFilePath:" + outputFilePath);
 	}
 
@@ -70,7 +70,6 @@ public class RestService {
 	private static void response(HttpUriRequestBase verbs, Path outputFile) {
 		try (CloseableHttpClient httpclient = HttpClients.createDefault();
 				CloseableHttpResponse response = httpclient.execute(verbs)) {
-			// TODO: Throw exception if response is like 'Session not found' despite 200 code.
 			logger.info("{} : {}", new Object[] { response.getCode(), response.getReasonPhrase() });
 
 			if (outputFile != null && !outputFile.toString().isBlank()) {

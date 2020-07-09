@@ -7,15 +7,14 @@ public class UpdateLocation extends SpecificMessages {
 	private double latitude;
 	private double longitude;
 	
+	/*************Constructor*************/
 	/**
-	 * TODO: Check the parameters's values.
-	 * @param latitude
-	 * @param longitude
+	 * The attributes of the super class should be initialized.
 	 */
-	public UpdateLocation(double latitude, double longitude) {
-		this.latitude = latitude;
-		this.longitude = longitude;
-	}
+	public UpdateLocation() {
+		super.method = this.method;
+		super.url = this.url;
+		}
 	
 	/*************Coordinates*************/
 	public double getLatitude() {
@@ -40,6 +39,11 @@ public class UpdateLocation extends SpecificMessages {
 	}
 	public String getUrl() {
 		return url;
+	}
+
+	@Override
+	public void loadOutputFilePath() {
+		// No outputFilePath.
 	}
 	
 }

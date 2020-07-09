@@ -7,14 +7,13 @@ public class GetCity extends SpecificMessages{
 	private double latitude;
 	private double longitude;
 	
+	/*************Constructor*************/
 	/**
-	 * TODO: Check the parameters's values.
-	 * @param latitude
-	 * @param longitude
+	 * The attributes of the super class should be initialized.
 	 */
-	public GetCity(double latitude, double longitude) {
-		this.latitude = latitude;
-		this.longitude = longitude;
+	public GetCity() {
+		super.method = this.method;
+		super.url = this.url;
 	}
 	
 	/*************Coordinates*************/
@@ -40,6 +39,12 @@ public class GetCity extends SpecificMessages{
 	}
 	public String getUrl() {
 		return url;
+	}
+	
+
+	@Override
+	public void loadOutputFilePath() {
+		//No outputFilePath yet.
 	}
 	
 }
