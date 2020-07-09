@@ -22,18 +22,9 @@ public class ProgramJsonParser {
 			  
 			  // print another message
 			  System.out.println("JsonParser should now open.");
-			  
-			}
+		}
 		catch (Exception ex) {
 			      ex.printStackTrace();  	      
 		}
 	}
-	
-	
-	// Verif de Python
-	//import sys   ->   version = sys.version   ->   if version[0]=="3": check=True else: check=False
-	
-	
-	
-	
 }
