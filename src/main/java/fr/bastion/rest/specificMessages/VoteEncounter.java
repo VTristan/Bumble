@@ -1,8 +1,12 @@
 package fr.bastion.rest.specificMessages;
 
+import java.nio.file.Paths;
+
+import fr.bastion.utiles.HttpMethod;
+
 public class VoteEncounter extends SpecificMessages {
 	
-	private final String method = "POST";
+	private final HttpMethod method = HttpMethod.POST;
 	private final String url = "https://bumble.com/mwebapi.phtml?SERVER_ENCOUNTERS_VOTE";
 	private String idTargetBabe = null;
 	private byte voteNumber = 0;
@@ -13,6 +17,16 @@ public class VoteEncounter extends SpecificMessages {
 		// Ternary condition : if choice = true : voteNumber = 2, else : voteNumber = 3.
 		this.voteNumber = (byte) ((choice) ? 2 : 3);
 	}
+	
+	/*************Constructor*************/
+	/**
+	 * The attributes of the super class should be initialized.
+	 */
+	public VoteEncounter() {
+		super.method = this.method;
+		super.url = this.url;
+		loadOutputFilePath();
+		}
 
 	/*************ID babe*************/
 	/**
@@ -58,7 +72,7 @@ public class VoteEncounter extends SpecificMessages {
 
 	
 	/*************Parameters*************/
-	public String getMethod() {
+	public HttpMethod getMethod() {
 		return method;
 	}
 
@@ -68,6 +82,11 @@ public class VoteEncounter extends SpecificMessages {
 
 	public String getBody() {
 		return body;
+	}
+
+	@Override
+	public void loadOutputFilePath() {
+		super.outputFilePath = Paths.get(super.applyXpath("parameters/parameter[@name='"+this.getClass().getSimpleName()+"']/outputFile/@path"));
 	}
 	
 }

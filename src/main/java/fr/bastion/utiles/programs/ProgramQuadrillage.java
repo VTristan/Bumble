@@ -6,8 +6,7 @@ public class ProgramQuadrillage {
 
 	public static void main(String[] args) {
 		
-		new Quadrillage("target/coordonnes.txt").drawSquare(48.7054463, 2.54068, 10, 1);
-		
+		new Quadrillage("Marion.coordonnee.txt", 48.6078 , 2.0595 , 5, 1).getCoordinates();
 	}
 
 }

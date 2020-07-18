@@ -4,7 +4,7 @@
 
 	<parameter name="Cookies">
 		<cookies
-			value="session=s1:427:a7Q2ZaQHzXHHnGclSD91oUYNqNqL9mgJQBDVNHOOT" />
+			value="session=s1:427:TjJSCZ72YdvGQy58J9w1s3LHWE67hQagiFQwiyuT" />
 	</parameter>
 
 	<parameter name="GetEncounters"> <!-- The name's value is the same as the class GetEncouters.java -->

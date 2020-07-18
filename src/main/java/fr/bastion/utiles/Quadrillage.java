@@ -3,25 +3,45 @@ package fr.bastion.utiles;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Quadrillage {
 	
-	private final String fileName;
-	double[][] square;
-	List<Double> ordo;
-	List<Double> absc;
-
+	//Constants.
 	private final double degreLat = 0.009;
 	private final double degreLong = 0.0143;
 	
-	public Quadrillage(String fileName) {
-		this.fileName = fileName;
+	//Constructor's parameters.
+	private Path fileName = null;
+	private double latitudeCenter;
+	private double longitudeCenter;
+	private int rayonKm;
+	private int decoupageKm;
+	
+	//Arrays.
+	private double[][] square;
+    private double[][] tableAllCoordinates;
+	
+	public Quadrillage(String fileName, double latitudeCenter, double longitudeCenter, int rayonKm, int decoupageKm) {
+		this.fileName = (fileName!=null) ? Paths.get(fileName) : null;
+		deleteIfFileExist();
+		this.latitudeCenter = latitudeCenter;
+		this.longitudeCenter = longitudeCenter;
+		this.rayonKm = (rayonKm<200) ? rayonKm : null;
+		this.decoupageKm = (decoupageKm >= (rayonKm*2)) ? null : decoupageKm;
 	}
+	
 
+	/**
+	 * This method calculate exactly the distance between two coordinates points.
+	 * @param lat1 latitude of point A.
+	 * @param lat2 latitude of point B.
+	 * @param lon1 longitude of point A.
+	 * @param lon2 longitude of point B.
+	 * @return
+	 */
 	public static double distance(double lat1, double lat2, double lon1, double lon2) {
 		lon1 = Math.toRadians(lon1);
 		lon2 = Math.toRadians(lon2);
@@ -39,96 +59,113 @@ public class Quadrillage {
 		return (c * r);
 	}
 	
-	public void drawSquare(double latCenter, double longCenter, int diametreKm, int cutting) {
-
-		if (cutting >= diametreKm) {
-			throw new IllegalArgumentException("L'espacement est trop grande par rapport au rayon");
-		}
-		
-		/* [0][] = latitude;
-		 * [1][] = longitude deplacement horizontal;
-		 * [][0] = centre;
-		 * [][1] = Nord.Ouest
-		 * [][2] = N.Est
-		 * [][3] = Sud.E
-		 * [][4] = S.O
-		 */
+	public double[][] getCoordinates(){
+		drawSquare();
+		return tableAllCoordinates;
+	}
+	
+	private void drawSquare() {
+		/* [0][] = Latitude (vertical);
+		 * [1][] = Longitude (horizontal);
+		 * [][0] = Center;
+		 * [][1] = N.O
+		 * [][2] = N.E
+		 * [][3] = S.E
+		 * [][4] = S.O */
 		square = new double[2][5];
 
-		//Centre
-		square[0][0] = latCenter;
-		square[1][0] = longCenter;
-		
+		//Center
+		square[0][0] = latitudeCenter; 
+		square[1][0] = longitudeCenter;
+		System.out.println("m"+square[0][1]+";"+square[1][0]);
 		//NO
-		square[0][1] = latCenter + (diametreKm/2)*degreLat;
-		square[1][1] = longCenter - (diametreKm/2)*degreLong;
-		
+		square[0][1] = latitudeCenter + (rayonKm)*degreLat;
+		square[1][1] = longitudeCenter - (rayonKm)*degreLong;
+		System.out.println("m"+square[0][1]+";"+square[1][1]);
 		//NE
-		square[0][2] = latCenter + (diametreKm/2)*degreLat;
-		square[1][2] = longCenter + (diametreKm/2)*degreLong;
+		square[0][2] = latitudeCenter + (rayonKm)*degreLat;
+		square[1][2] = longitudeCenter + (rayonKm)*degreLong;
 
 		//SE
-		square[0][3] = latCenter - (diametreKm/2)*degreLat;
-		square[1][3] = longCenter + (diametreKm/2)*degreLong;
+		square[0][3] = latitudeCenter - (rayonKm)*degreLat;
+		square[1][3] = longitudeCenter + (rayonKm)*degreLong;
 		
 		//SO
-		square[0][4] = latCenter - (diametreKm/2)*degreLat;
-		square[1][4] = longCenter - (diametreKm/2)*degreLong;
+		square[0][4] = latitudeCenter - (rayonKm)*degreLat;
+		square[1][4] = longitudeCenter - (rayonKm)*degreLong;
 		
-		scale(diametreKm ,cutting);
+		generateMatrice((rayonKm*2));
 	}
 
-	public void scale(int diametreKm, int cutting) {
+	private void generateMatrice(int diametreKm) {
 		
-		int div = ( (diametreKm / cutting));
-
-		double startLat = square[0][3]; //Latitude la plus au sud.
-		double endLat = square[0][1]; //Latitude la plus au nord.
-		double startLong = square[1][1]; //Longitude la plus à l'ouest.
-		double endLong = square[1][2]; //Longitude la plus à l'est.
-
-		double incrementLat = (endLat-startLat)/div;
-		double incrementLong = (endLong-startLong)/div;
+		double startLat = square[0][3]; //Southernmost.Latitude. x
+		double endLat = square[0][1]; //Northernmost.Latitude. x
 		
-		this.ordo = abscOrdo(startLat, endLat, incrementLat);
-		this.absc = abscOrdo(startLong, endLong, incrementLong);
+		double startLong = square[1][1]; //Easternmost.Longitude. y
+		double endLong = square[1][2]; //westernmost.Longitude. y
 		
-		//writeDots(absc, ordo);
-
+		//Latitude:
+		double[] tableauLatitudes = calculateAbcOrd(latitudeCenter-decoupageKm*degreLat,startLat , latitudeCenter,endLat , (decoupageKm*degreLat));
+		//Longitude:
+		double[] tableauLongitude = calculateAbcOrd(longitudeCenter-(decoupageKm*degreLong), startLong, longitudeCenter, endLong, (decoupageKm*degreLong));  
+		
+		calculateAllCombinations(tableauLatitudes, tableauLongitude);
 	}
+	
+	private double[] calculateAbcOrd(double nStart,double nEnd, double pStart,double pEnd, double incrementation) {
+		double[] listCoordonnees = new double[((rayonKm/decoupageKm)*2)+1];
+		int increment=0;
 
-	private List<Double> abscOrdo(double start, double end, double increment) {
-		List<Double> list = new ArrayList<Double>();
-		while (start <= end) {
-			list.add(start);
-			start = start+ increment;			
+		for (double i = nStart; i >= nEnd; i=i-incrementation) {
+			listCoordonnees[increment] = i;
+			increment++;
 		}
-		return list;
-	}	
-
-	private void writeDots(List<Double> absc, List<Double> ordo) {
-		String content = "latitude ; longitude\n";
-		try {
-			Files.deleteIfExists(Paths.get(fileName));
-			Files.writeString(Paths.get(fileName), content, StandardCharsets.UTF_8, StandardOpenOption.CREATE);
-			
-			for (Double a : absc) {
-				for (Double o : ordo) {
-					content = o+" ; "+a+"\n";
-						Files.writeString(Paths.get(fileName), content, StandardCharsets.UTF_8, StandardOpenOption.APPEND);
-				}
+		
+		for (double j = pStart; j <= pEnd; j=j+incrementation) {
+			listCoordonnees[increment] = j;
+			increment++;
+		}
+		return listCoordonnees;
+	}
+	
+	private void calculateAllCombinations(double[] tableauLatitudes, double[] tableauLongitude) {
+        tableAllCoordinates = new double[2][(int) Math.pow(((rayonKm/decoupageKm)*2)+1, 2)];
+		String content;
+        int i = 0;
+        
+        for (double lt : tableauLatitudes) {
+        	
+        	for (double lg : tableauLongitude) {
+        		tableAllCoordinates[0][i] = lt;
+        		tableAllCoordinates[1][i] = lg;
+        		content = i+": [latitude "+tableAllCoordinates[0][i]+" ; longitude "+tableAllCoordinates[1][i]+"]\n";
+				System.out.print(content);
+				write(content);
+				i++;
 			}
-		} catch (IOException e1) {
-			e1.printStackTrace();
 		}
-	}
+	}		
+	
+	private void deleteIfFileExist() {
+		if (fileName!=null) {
+			try {
+				Files.deleteIfExists(fileName);
+				Files.writeString(fileName, "latitude ; longitude\n", StandardCharsets.UTF_8, StandardOpenOption.CREATE);
 
-	public List<Double> getOrdo() {
-		return ordo;
-	}
-
-	public List<Double> getAbsc() {
-		return absc;
+				} catch (IOException e) {
+					e.printStackTrace();
+					}
+			}
+		}
+	
+	private void write(String content) {
+		try {
+			if (fileName!=null && Files.exists(fileName)) 
+				Files.writeString(fileName, content, StandardCharsets.UTF_8, StandardOpenOption.APPEND);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }
