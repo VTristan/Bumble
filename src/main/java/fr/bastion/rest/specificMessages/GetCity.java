@@ -1,8 +1,10 @@
 package fr.bastion.rest.specificMessages;
 
+import fr.bastion.utiles.HttpMethod;
+
 public class GetCity extends SpecificMessages{
 
-	private final String method = "POST";
+	private final HttpMethod method = HttpMethod.POST;
 	private final String url = "https://bumble.com/mwebapi.phtml?SERVER_GET_CITY";
 	private double latitude;
 	private double longitude;
@@ -34,7 +36,7 @@ public class GetCity extends SpecificMessages{
 	public String getBody() {
 		return "{\"body\":[{\"message_type\":309,\"server_get_city\":{\"latitude\":"+latitude+",\"longitude\":"+longitude+"}}],\"message_id\":15,\"message_type\":309,\"version\":1,\"is_background\":false}";
 	}	
-	public String getMethod() {
+	public HttpMethod getMethod() {
 		return method;
 	}
 	public String getUrl() {

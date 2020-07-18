@@ -77,11 +77,11 @@ public class Quadrillage {
 		//Center
 		square[0][0] = latitudeCenter; 
 		square[1][0] = longitudeCenter;
-		
+		System.out.println("m"+square[0][1]+";"+square[1][0]);
 		//NO
 		square[0][1] = latitudeCenter + (rayonKm)*degreLat;
 		square[1][1] = longitudeCenter - (rayonKm)*degreLong;
-		
+		System.out.println("m"+square[0][1]+";"+square[1][1]);
 		//NE
 		square[0][2] = latitudeCenter + (rayonKm)*degreLat;
 		square[1][2] = longitudeCenter + (rayonKm)*degreLong;

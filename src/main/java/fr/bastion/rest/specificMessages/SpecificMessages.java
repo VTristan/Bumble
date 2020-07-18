@@ -2,9 +2,16 @@ package fr.bastion.rest.specificMessages;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.slf4j.Logger;
+
 import fr.bastion.rest.RestService;
 import fr.bastion.rest.RestServiceManagement;
+import fr.bastion.utiles.HttpMethod;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.s9api.DocumentBuilder;
 import net.sf.saxon.s9api.Processor;
@@ -18,7 +25,7 @@ public abstract class SpecificMessages {
 
 	// Parameters.
 	private static String headerCookie = null;
-	protected String method = null;
+	protected HttpMethod method = null;
 	protected String url = null;
 	protected String body = null;
 	protected Path outputFilePath = null;
@@ -78,13 +85,19 @@ public abstract class SpecificMessages {
 	}
 
 	public void messaging() {
-		RestService.displayParameters(method, url, headerCookie, body, outputFilePath);
-		//RestService.restMessage(method, url, headerCookie, body, outputFilePath);
+		//RestService.displayParameters(method, url, headerCookie, body, outputFilePath);
+		//TODO:à faire dans la classe Bumble get encounter
+	Map<String,String> dataBaseParameters = new HashMap<String,String>();
+	dataBaseParameters.put("dabaseName", "test");
+	dataBaseParameters.put("collectionName", "BumbleGetEncouters");
+		
+	//RestService.restMessage(method, url, headerCookie, body, outputFilePath);
+	RestService.restMessage(method, url, headerCookie, body, dataBaseParameters);
 	}
 	
 	public void messaging(String body) {
-		RestService.displayParameters(method, url, headerCookie, body, outputFilePath);
-		//RestService.restMessage(method, url, headerCookie, body, outputFilePath);
+		//RestService.displayParameters(method, url, headerCookie, body, outputFilePath);
+		RestService.restMessage(method, url, headerCookie, body, null);
 	}
 
 }

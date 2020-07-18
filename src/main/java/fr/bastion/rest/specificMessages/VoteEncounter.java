@@ -2,9 +2,11 @@ package fr.bastion.rest.specificMessages;
 
 import java.nio.file.Paths;
 
+import fr.bastion.utiles.HttpMethod;
+
 public class VoteEncounter extends SpecificMessages {
 	
-	private final String method = "POST";
+	private final HttpMethod method = HttpMethod.POST;
 	private final String url = "https://bumble.com/mwebapi.phtml?SERVER_ENCOUNTERS_VOTE";
 	private String idTargetBabe = null;
 	private byte voteNumber = 0;
@@ -70,7 +72,7 @@ public class VoteEncounter extends SpecificMessages {
 
 	
 	/*************Parameters*************/
-	public String getMethod() {
+	public HttpMethod getMethod() {
 		return method;
 	}
 

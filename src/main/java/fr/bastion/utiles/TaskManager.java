@@ -4,10 +4,11 @@ import java.util.Timer;
 
 public class TaskManager {
 	
-	public Timer timer = new Timer();
+	private Timer timer = new Timer();
 	
-	public void startBumbleTask() {
-		timer.schedule(new BumbleTask(timer, (byte) 1), 5000, 10000);
+	public void startBumbleTask(Quadrillage location, byte nbBoucle, long delay, long period) {
+
+		timer.schedule(new BumbleTask(timer, (byte) nbBoucle, location), delay, period);
 	}	
 	
 //	public void startTinderTask() {
