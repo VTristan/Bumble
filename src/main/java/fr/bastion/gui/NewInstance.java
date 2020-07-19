@@ -6,7 +6,9 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -21,20 +23,23 @@ public class NewInstance extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	private JButton okButton, cancelButton;
-	private JRadioButton choice1, choice2, choice3, choice4, choice5;
-	private JTextField tfName, tfCookie, tfDelay, tfPeriod, longitude, latitude, rayon, distance;
-	private JLabel warning;
-	Map<String, String>listPath;
+	private JRadioButton tinder, bumble, happn, once, fruits;
+	private JTextField name, cookie, delay, period, longitude, latitude, rayon, distance;
+	ButtonGroup bg;
+	private List<JRadioButton> list;
 
 	public NewInstance(JPanel pInstance) {
 
 		this.setTitle("Création d'une nouvelle instance");
 		this.setSize(500, 400);
-//		this.setResizable(false);
+		this.setResizable(false);
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.setLocationRelativeTo(null);
 		this.getContentPane().setLayout(new FlowLayout(FlowLayout.CENTER));
 
+		//LIST
+		list = new ArrayList<JRadioButton>(5);
+		
 		//BUTTONS
 		okButton = new JButton("CREER");
 		cancelButton = new JButton("ANNULER");
@@ -43,18 +48,16 @@ public class NewInstance extends JFrame {
 		JPanel pSite = new JPanel();
 		pSite.setBorder(BorderFactory.createTitledBorder("Application :"));
 		pSite.setPreferredSize(new Dimension(440, 60));
-		choice1 = new JRadioButton("TINDER");
-		choice2 = new JRadioButton("BUMBLE");
-		choice2.setSelected(true);
-		choice3 = new JRadioButton("HAPPN");
-		choice4 = new JRadioButton("ONCE");
-		choice5 = new JRadioButton("FRUITS");
-		ButtonGroup bg = new ButtonGroup();
-		bg.add(choice1); pSite.add(choice1);
-		bg.add(choice2); pSite.add(choice2);
-		bg.add(choice3); pSite.add(choice3);
-		bg.add(choice4); pSite.add(choice4);
-		bg.add(choice5); pSite.add(choice5);
+		tinder = new JRadioButton("Tinder");
+		bumble = new JRadioButton("Bumble");
+		bumble.setSelected(true);
+		happn = new JRadioButton("Happn");
+		once = new JRadioButton("Once");
+		fruits = new JRadioButton("Fruits");
+		bg = new ButtonGroup();
+		bg.add(tinder);bg.add(bumble);bg.add(happn);bg.add(once);bg.add(fruits);
+		pSite.add(tinder);pSite.add(bumble);pSite.add(happn);pSite.add(once);pSite.add(fruits);
+		list.add(tinder);list.add(bumble);list.add(happn);list.add(once);list.add(fruits);
 		
 		//NAME + COOKIES
 		JPanel pUser = new JPanel();
@@ -62,11 +65,11 @@ public class NewInstance extends JFrame {
 		pUser.setPreferredSize(new Dimension(440, 100));
 		JPanel line1 = new JPanel(); JPanel line2 = new JPanel();
 		line1.add(new JLabel("Nom de l'instance:", SwingConstants.CENTER));
-		tfName = new JTextField("INSTANCE-1", 8);
-		line1.add(tfName);
+		name = new JTextField("1:ISTNC-"+LocalDateTime.now().toLocalDate(), 12);
+		line1.add(name);
 		line2.add(new JLabel("Cookies :",SwingConstants.CENTER));
-		tfCookie = new JTextField("s2:427:gTxCGeazuXJH00bZVnGsW5pe7I7YtOf6U26sWc6M", 32);
-		line2.add(tfCookie);
+		cookie = new JTextField("s2:427:gTxCGeazuXJH00bZVnGsW5pe7I7YtOf6U26sWc6M", 32);
+		line2.add(cookie);
 		pUser.add(line1);
 		pUser.add(line2);
 		
@@ -76,12 +79,12 @@ public class NewInstance extends JFrame {
 		pTimer.setPreferredSize(new Dimension(440, 70));
 		pTimer.setLayout(new GridLayout(2, 3));
 		pTimer.add(new JLabel("Dans un délai de: ",SwingConstants.RIGHT));
-		tfDelay = new JTextField("1");
-		pTimer.add(tfDelay);
+		delay = new JTextField("1");
+		pTimer.add(delay);
 		pTimer.add(new JLabel(" minute(s)",SwingConstants.LEFT));
 		pTimer.add(new JLabel("Par période de: ",SwingConstants.RIGHT));
-		tfPeriod = new JTextField("5");
-		pTimer.add(tfPeriod);
+		period = new JTextField("5");
+		pTimer.add(period);
 		pTimer.add(new JLabel(" minute(s)",SwingConstants.LEFT));
 		
 		//Location
@@ -103,11 +106,6 @@ public class NewInstance extends JFrame {
 		distance = new JTextField("1");
 		pLocation.add(distance);
 		
-		// Label Warning
-		warning = new JLabel("WARNING",SwingConstants.CENTER);
-		warning.setFont(new Font(Font.SANS_SERIF, Font.ITALIC, 12));
-		warning.setVisible(false);
-		
 		// Add to ContentPane
 		this.getContentPane().add(pSite);
 		this.getContentPane().add(pUser);
@@ -115,30 +113,29 @@ public class NewInstance extends JFrame {
 		this.getContentPane().add(pLocation);
 		this.getContentPane().add(okButton);
 		this.getContentPane().add(cancelButton);
-		this.getContentPane().add(warning);
 
 		// Listener OK
 		okButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				warning.setVisible(true);
+				String app = null;
+				for (JRadioButton jRadioButton : list) {
+					app = (jRadioButton.isSelected()) ? jRadioButton.getText() : app;
+				}
+				JPanel jPanel = new JPanel(new GridLayout(2,1));
+				jPanel.add(new JLabel(name.getText()+ " : ",SwingConstants.CENTER));
+				JLabel label = new JLabel(app+" ("+latitude.getText()+","+longitude.getText()+") ["+rayon.getText()+","+distance.getText()+"] {"+delay.getText()+","+ period.getText()+"}  '"+cookie.getText()+"'",SwingConstants.CENTER);
+				label.setFont(new Font(Font.SANS_SERIF, Font.ITALIC, 10));
+				//TODO: STOP BUTTON
 
-				System.out.println(tfName.getText());
-				System.out.println(tfCookie.getText());
-				System.out.println(tfDelay.getText());
-				System.out.println(tfPeriod.getText());
-				System.out.println(longitude.getText());
-				System.out.println(latitude.getText());
-				System.out.println(rayon.getText());
-				System.out.println(distance.getText());
-				//pInstance.getParent().add(pInstance.add(new JLabel("SITE " + tfName.getText()+ " ACTIF ")));
-				//repaint();
+				jPanel.add(label);
+				pInstance.add(jPanel);
+				pInstance.revalidate();
+				pInstance.repaint();
+				dispose();
 			}});
 		
 		// CANCEL
-		cancelButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				dispose();
-			}});
+		cancelButton.addActionListener((e) -> dispose());
 		
 		this.setVisible(true);
 	}

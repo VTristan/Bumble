@@ -4,8 +4,10 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.GridLayout;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -21,22 +23,20 @@ public class Monitoring extends JFrame {
 	public Monitoring() {
 
 		this.setTitle("Ecran de gestion");
-		this.setSize(500, 350);
+		this.setSize(600, 400);
 		this.setResizable(false);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.setLocationRelativeTo(null);
 		this.getContentPane().setLayout(new FlowLayout());
 
 		// BUTTONS
 		okButton = new JButton("CREER NOUVELLE INSTANCE");
-		cancelButton = new JButton("QUITTER");
+		cancelButton = new JButton("ARRETER LE PROGRAMME");
 
 		// Instances List
-		JPanel pInstance = new JPanel();
+		JPanel pInstance = new JPanel(new GridLayout(10,1));
 		pInstance.setBorder(BorderFactory.createTitledBorder("Liste des instances en cours d'execution :"));
-		pInstance.setPreferredSize(new Dimension(440, 200));
-		pInstance.add(new JLabel("instance A + prénom + status"));
-		pInstance.add(new JButton("STOP"));
+		pInstance.setPreferredSize(new Dimension(550, 300));
 
 		// LABEL WARNING
 		warning = new JLabel();
@@ -52,19 +52,19 @@ public class Monitoring extends JFrame {
 		this.getContentPane().add(warning);
 
 		// LISTENER OK
-		okButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				new NewInstance(pInstance);
-			}
-		});
+		okButton.addActionListener((e)-> new NewInstance(pInstance));
 
-		// CANCEL
-		cancelButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				System.exit(0);
-			}
-		});
+		// LISTENER CANCEL
+		cancelButton.addActionListener((e) -> System.exit(0));
 
+		this.addWindowListener(new WindowAdapter()
+		{
+		    public void windowClosing(WindowEvent e)
+		    { //INNER CLASS
+		        Monitoring.this.setExtendedState(JFrame.ICONIFIED);
+		    }
+		});
+		
 		this.setVisible(true);
 	}
 
