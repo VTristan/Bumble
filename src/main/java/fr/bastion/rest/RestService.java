@@ -82,7 +82,7 @@ public class RestService {
 //			if (output != null && !output.toString().isBlank()) {
 //				copyResponse(response, output);
 //			}
-			if (dataBaseParameters != null) {
+			if (dataBaseParameters != null) { // TODO: Si le message a un code 200 mais contient 'error' dedans, ne pas l'enregirstrer ! Propre à Bumble
 				copyResponseInDataBase(response, dataBaseParameters);
 			}
 
@@ -106,7 +106,7 @@ public class RestService {
 			while ((line = br.readLine()) != null) {
 				content = content +line;
 			}
-			newContent = content.replace('$','e');
+			newContent = content.replace('$','e'); // TODO: Propre à la classe Bumble !
 			dao.insertOneString(base, collection, newContent);
 			
 		} catch (UnsupportedOperationException e) {
