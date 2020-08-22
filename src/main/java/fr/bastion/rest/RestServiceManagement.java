@@ -1,6 +1,13 @@
 package fr.bastion.rest;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import org.slf4j.Logger;
+
+import fr.bastion.rest.specificMessages.SpecificMessages;
+import fr.bastion.utiles.HttpMethod;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.s9api.DocumentBuilder;
 import net.sf.saxon.s9api.Processor;
@@ -11,42 +18,55 @@ import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmNode;
 
 public class RestServiceManagement {
-	//config
-	private Processor proc;
-	private DocumentBuilder builder;
-	private XPathCompiler compiler;
-	private XdmNode contextNode;
-	
-	//params
-	private String method;
+
+	// Configurations.
+	private static Logger logger = org.slf4j.LoggerFactory.getLogger(RestServiceManagement.class);
+	private static Processor proc = new Processor(Configuration.newConfiguration());
+	private static DocumentBuilder builder = proc.newDocumentBuilder();
+	private static XPathCompiler compiler = proc.newXPathCompiler();
+	private static XdmNode contextNode = null;
+
+	// Parameters.
+	private HttpMethod method;
 	private String url;
-	private String header;
+	private static String headerCookie = null;
 	private String body;
-	private String outputFile;
-	
-	public void setParameter(String source) {
+	private Path outputFilePath;
+
+	// Constructor.
+	public RestServiceManagement() {
+		// Singleton.
+		if (contextNode == null) {
+			loadCookies();
+		}
+	}
+
+	private void loadCookies() {
 		try {
-			//Configuration
-			proc = new Processor(Configuration.newConfiguration());
-			builder = proc.newDocumentBuilder();
-			compiler = proc.newXPathCompiler();
-			contextNode = builder.build(new File(source)); //Chargement du document
-		
-			//Initialisations des params
-			this.method = applyXpath("document/parameters/uri/@method");
-			this.url = applyXpath("document/parameters/uri/@url");
-			this.header = applyXpath("document/parameters/header/@value");
-			this.body = applyXpath("document/parameters/body/@value");
-			this.outputFile = applyXpath("document/parameters/outputFile/@path");
-			
+			// Configuration.
+			// TODO: classPath or pom.xml. 
+			contextNode = builder.build(new File("src/main/resources/messages/parameters.xml"));
+			headerCookie = applyXpath("parameters/parameter/cookies/@value");
+			if (headerCookie==null || headerCookie.isBlank()) {
+				throw new IllegalArgumentException("Cookies have been eaten!");
+			}
 		} catch (SaxonApiException e) {
 			e.printStackTrace();
 		}
+		logger.info("Cookies loaded");
 	}
-	
+
+	public void setParameter(SpecificMessages source) {
+		//this.method = source.getMethod();
+		//this.url = source.getUrl();
+		//this.body = source.getBody();
+		this.outputFilePath = Paths.get(applyXpath("parameters/parameter[@name='"+source.getClass().getSimpleName()+"']/outputFile/@path"));
+	}
+
 	private String applyXpath(String xpath) {
 		try {
-			XPathSelector seq = compiler.compile(xpath).load(); //Compilation du xpath
+			// x-path compilation.
+			XPathSelector seq = compiler.compile(xpath).load();
 			seq.setContextItem(contextNode);
 			String parameter = null;
 			for (XdmItem item : seq) {
@@ -58,15 +78,22 @@ public class RestServiceManagement {
 			return null;
 		}
 	}
-	
+
 	public void messaging() {
-		new ApiRest().messageRest(method, url, header, body, outputFile);
+		RestService.displayParameters(method, url, headerCookie, body, outputFilePath);
+
+		//RestService.restMessage(method, url, headerCookie, body, outputFilePath);
+
+	}
+	
+	public void messaging(String body) {
+		RestService.displayParameters(method, url, headerCookie, body, outputFilePath);
+		//RestService.restMessage(method, url, headerCookie, body, outputFilePath);
 	}
 
 	@Override
 	public String toString() {
-		return "Method: " + method + "\nUrl: " + url + "\nHeader: " + header + "\nBody: " + body
-				+ "\nOutputFile: " + outputFile;
+		return "Method: " + method + "\nUrl: " + url + "\nHeader: " + headerCookie + "\nBody: " + body + "\nOutputFile: " + outputFilePath;
 	}
 
 }
