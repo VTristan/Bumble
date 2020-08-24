@@ -4,6 +4,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 
 import org.apache.hc.client5.http.classic.methods.HttpDelete;
@@ -31,21 +37,21 @@ public class RestService {
 		logger.info("method: " + method + " url:" + url + " headerCookie:" + headerCookie + " body:" + body + " output:" + output);
 	}
 
-//	public static void restMessage(HttpMethod method, String url, String headerCookie, String body, Path outputFilePath) {
-//		displayParameters(method, url, headerCookie, body, outputFilePath);
-//		
-//		HttpUriRequestBase verbs = request(method, url, headerCookie, body, outputFilePath);
-//		response(verbs, outputFilePath);
-//	}
-	
-	public static void restMessage(HttpMethod method, String url, String headerCookie, String body, Map<String,String> dataBaseParameters) {
-		displayParameters(method, url, headerCookie, body, dataBaseParameters);
+	public static void restMessage(HttpMethod method, String url, String headerCookie, String body, Path outputFilePath) {
+		displayParameters(method, url, headerCookie, body, outputFilePath);
 		
-		HttpUriRequestBase verbs = request(method, url, headerCookie, body);
-		response(verbs, dataBaseParameters);
+		HttpUriRequestBase verbs = request(method, url, headerCookie, body, outputFilePath);
+//		response(verbs, outputFilePath);
 	}
+	
+//	public static void restMessage(HttpMethod method, String url, String headerCookie, String body, Map<String,String> dataBaseParameters) {
+//		displayParameters(method, url, headerCookie, body, dataBaseParameters);
+//		
+//		HttpUriRequestBase verbs = request(method, url, headerCookie, body);
+//		response(verbs, dataBaseParameters);
+//	}
 
-	private static HttpUriRequestBase request(HttpMethod method, String url, String headerCookie, String body) {
+	private static HttpUriRequestBase request(HttpMethod method, String url, String headerCookie, String body, Path outputFilePath) {
 		HttpUriRequestBase verbs = null;
 
 		switch (method) {
@@ -117,32 +123,32 @@ public class RestService {
 	
 	}
 
-//	private static void copyResponse(CloseableHttpResponse response, Path outputFile) {
-//		checkingOutputFilePath(outputFile);
-//
-//		try (BufferedReader br = new BufferedReader(new InputStreamReader((response.getEntity().getContent()), StandardCharsets.UTF_8))) {
-//			String output;
-//			String date = new SimpleDateFormat("'['dd/MM/yyyy hh:mm:ss']'").format(new Date());
-//
-//			while ((output = br.readLine()) != null) {
-//				Files.writeString(outputFile, date + output + ",\n", StandardCharsets.UTF_8, StandardOpenOption.APPEND);
-//			}
-//		} catch (UnsupportedOperationException e) {
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//	}
-//
-//	private static void checkingOutputFilePath(Path outputFile) {
-//		if (Files.notExists(outputFile, LinkOption.NOFOLLOW_LINKS)) {
-//			try {
-//				Files.createDirectories(outputFile.getParent());
-//				Files.createFile(outputFile);
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-//		}
-//	}
+	public static void copyResponse(CloseableHttpResponse response, Path outputFile) {
+		checkingOutputFilePath(outputFile);
+
+		try (BufferedReader br = new BufferedReader(new InputStreamReader((response.getEntity().getContent()), StandardCharsets.UTF_8))) {
+			String output;
+			String date = new SimpleDateFormat("'['dd/MM/yyyy hh:mm:ss']'").format(new Date());
+
+			while ((output = br.readLine()) != null) {
+				Files.writeString(outputFile, date + output + ",\n", StandardCharsets.UTF_8, StandardOpenOption.APPEND);
+			}
+		} catch (UnsupportedOperationException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static void checkingOutputFilePath(Path outputFile) {
+		if (Files.notExists(outputFile, LinkOption.NOFOLLOW_LINKS)) {
+			try {
+				Files.createDirectories(outputFile.getParent());
+				Files.createFile(outputFile);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
 }

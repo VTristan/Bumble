@@ -21,19 +21,11 @@ public class ProgramJsonParser {
 			  Process process = Runtime.getRuntime().exec(cmdArray);
 			  
 			  // print another message
-			  System.out.println("JsonParser should now open.");
+			  System.out.println("JsonParser should now be open.");
 			  
 			}
 		catch (Exception ex) {
 			      ex.printStackTrace();  	      
 		}
 	}
-	
-	
-	// Verif de Python
-	//import sys   ->   version = sys.version   ->   if version[0]=="3": check=True else: check=False
-	
-	
-	
-	
 }

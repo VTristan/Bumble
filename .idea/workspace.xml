@@ -2,9 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d8d9e287-3252-4ae1-b0db-f6849c5649c4" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/bastion/rest/programs/ProgramGetEncounter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/bastion/rest/programs/ProgramGetEncounter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/bastion/utiles/JsonParser.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/bastion/utiles/JsonParser.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/bastion/rest/RestServiceManagement.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/bastion/rest/RestServiceManagement.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/bastion/rest/specificMessages/GetEncounters.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/bastion/rest/specificMessages/GetEncounters.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/data/encounters" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/data/encounters" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/messages/parameters.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/messages/parameters.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -39,10 +40,10 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-23" />
+    <option name="x" value="-24" />
     <option name="y" value="50" />
-    <option name="width" value="1078" />
-    <option name="height" value="1004" />
+    <option name="width" value="1079" />
+    <option name="height" value="1005" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -98,8 +99,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-18" y="40" width="862" height="803" extended-state="0" />
-    <editor active="true" />
+    <frame x="-19" y="40" width="863" height="804" extended-state="0" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.25" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />

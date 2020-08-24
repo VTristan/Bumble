@@ -6,8 +6,8 @@ import java.nio.file.Paths;
 
 import org.slf4j.Logger;
 
+import fr.bastion.rest.specificMessages.GetEncounters;
 import fr.bastion.rest.specificMessages.SpecificMessages;
-import fr.bastion.utiles.HttpMethod;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.s9api.DocumentBuilder;
 import net.sf.saxon.s9api.Processor;
@@ -27,10 +27,7 @@ public class RestServiceManagement {
 	private static XdmNode contextNode = null;
 
 	// Parameters.
-	private HttpMethod method;
-	private String url;
 	private static String headerCookie = null;
-	private String body;
 	private Path outputFilePath;
 
 	// Constructor.
@@ -80,20 +77,9 @@ public class RestServiceManagement {
 	}
 
 	public void messaging() {
-		RestService.displayParameters(method, url, headerCookie, body, outputFilePath);
-
-		//RestService.restMessage(method, url, headerCookie, body, outputFilePath);
+		GetEncounters.displayParameters(headerCookie, outputFilePath);
 
 	}
-	
-	public void messaging(String body) {
-		RestService.displayParameters(method, url, headerCookie, body, outputFilePath);
-		//RestService.restMessage(method, url, headerCookie, body, outputFilePath);
-	}
 
-	@Override
-	public String toString() {
-		return "Method: " + method + "\nUrl: " + url + "\nHeader: " + headerCookie + "\nBody: " + body + "\nOutputFile: " + outputFilePath;
-	}
 
 }
