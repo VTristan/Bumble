@@ -8,7 +8,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 
 import fr.bastion.rest.RestService;
-import fr.bastion.rest.RestServiceManagement;
 import fr.bastion.utiles.HttpMethod;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.s9api.DocumentBuilder;
@@ -30,7 +29,7 @@ public abstract class SpecificMessages {
 
 
 	// Configurations.
-	private static Logger logger = org.slf4j.LoggerFactory.getLogger(RestServiceManagement.class);
+	private static Logger logger = org.slf4j.LoggerFactory.getLogger(SpecificMessages.class);
 	private static Processor proc = new Processor(Configuration.newConfiguration());
 	private static DocumentBuilder builder = proc.newDocumentBuilder();
 	private static XPathCompiler compiler = proc.newXPathCompiler();
@@ -89,13 +88,13 @@ public abstract class SpecificMessages {
 	dataBaseParameters.put("dabaseName", "test");
 	dataBaseParameters.put("collectionName", "BumbleGetEncouters");
 		
-	//RestService.restMessage(method, url, headerCookie, body, outputFilePath);
-	RestService.restMessage(method, url, headerCookie, body, dataBaseParameters);
+	//RestService.restMessage(method, url, headerCookie, body,null, outputFilePath);
+	RestService.restMessage(method, url, headerCookie, body, dataBaseParameters, null);
 	}
 	
 	public void messaging(String body) {
 		//RestService.displayParameters(method, url, headerCookie, body, outputFilePath);
-		RestService.restMessage(method, url, headerCookie, body, null);
+		RestService.restMessage(method, url, headerCookie, body, null, null);
 	}
 
 }

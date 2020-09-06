@@ -7,7 +7,6 @@ import fr.bastion.rest.specificMessages.UpdateLocation;
 
 public class BumbleTask extends TimerTask {
 	
-	private Quadrillage quadrillage;
 	private GetEncounters encounters;
 	private UpdateLocation location;
 	private Timer timer;
@@ -23,7 +22,6 @@ public class BumbleTask extends TimerTask {
 		encounters = new GetEncounters();
 		location = new UpdateLocation();
 		//city = new GetCity();
-		coordinatesList = quadrillage.getCoordinates();
 		currentloop = 0;
 		incrementCoordinates = 0;
 		bodyLocation = null;
@@ -33,11 +31,11 @@ public class BumbleTask extends TimerTask {
 	public BumbleTask(Timer timer, byte maxloop, Quadrillage quadrillage) {
 		this.timer = timer;
 		this.maxloop = maxloop;
-		this.quadrillage = quadrillage;
+		this.coordinatesList = quadrillage.getCoordinates();
+
 	}
 
 
-	@Override
 	public void run() {
 		bodyLocation = updateBodyLocation();
 		

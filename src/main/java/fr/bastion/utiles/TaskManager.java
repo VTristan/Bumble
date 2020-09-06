@@ -7,8 +7,9 @@ public class TaskManager {
 	private Timer timer = new Timer();
 	
 	public void startBumbleTask(Quadrillage location, byte nbBoucle, long delay, long period) {
-
-		timer.schedule(new BumbleTask(timer, (byte) nbBoucle, location), delay, period);
+		BumbleTask bumble = new BumbleTask(timer, (byte) nbBoucle, location);
+		
+		timer.schedule(bumble, delay, period);
 	}	
 	
 //	public void startTinderTask() {

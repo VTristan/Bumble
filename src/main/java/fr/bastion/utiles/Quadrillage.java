@@ -61,6 +61,7 @@ public class Quadrillage {
 	
 	public double[][] getCoordinates(){
 		drawSquare();
+		System.out.println(tableAllCoordinates);
 		return tableAllCoordinates;
 	}
 	
