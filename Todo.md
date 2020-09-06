@@ -1,6 +1,11 @@
 # Bumble
 
-/ parser response obtenu avant copier
-/ parser le fichier obtenu avec la response, et copier/coller le contenu dans un autre fichier
-/ programme pour filter les profiles ayant voté 'oui'.
-/ visuel quadrillage geographique
+Depuis mongoDB, après avoir enregistré les profils 'getEncounters()', faire une requête pour ne retourner que ces profils 'has_user_voted':'true'. 
+
++
+
+visuel quadrillage geographique
+
++
+
+Tinder
