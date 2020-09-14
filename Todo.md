@@ -8,7 +8,7 @@ db.encounter.find({"user.their_vote":2},{"user.name":1,"user.age":1,"user.distan
 +
 
 visuel quadrillage geographique
-
+-> essayer https://openlayers.org/
 +
 
 Tinder
